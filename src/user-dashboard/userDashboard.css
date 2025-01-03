@@ -1,0 +1,13 @@
+.dashboard-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+    padding: 50px;
+}
+.dashboard-content h1, p{
+
+    margin-bottom: 20px;
+    color: black;
+}
