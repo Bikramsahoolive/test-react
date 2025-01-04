@@ -5,6 +5,7 @@ import { ClipLoader } from 'react-spinners';
 import {useNavigate} from 'react-router-dom'
 
 function Login(){
+    const localAuthToken = localStorage.getItem('AUTH_TOKEN');
     const navigate = useNavigate();
     const [loader, setLoader] = useState(false);
     const [username,setUsername]= useState('');
@@ -75,7 +76,11 @@ function Login(){
         
     }
 
-    return(
+    function navigateToForgotPassword(){
+        return navigate('/forgotPassword');
+    }
+
+    return(localAuthToken?<h1 style={{marginTop:'100px',color:'Black'}}>Already Logged In.</h1>:
         <div className="login-component">
   <div className="login-content">
     <div className="header">
@@ -95,8 +100,7 @@ function Login(){
                                         />Enter</button>
     </form>
     <div className="signup">
-      <b>Don't have account?</b>
-      <a href="#">Sign up</a>
+    <a onClick={navigateToForgotPassword}>Forgot Password</a>
     </div>
   </div>
 </div>

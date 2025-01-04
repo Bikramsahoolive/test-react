@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import Hero from './hero-page/hero'
 import Login from './login-page/login';
+import ForgotPassword from './forgot-password/forgotPassword';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import UserDashboard from './user-dashboard/userDashboard';
@@ -16,6 +17,7 @@ root.render(
    <Routes>
     <Route path='/' element={<Hero/>}/>
     <Route path='/login' element={<Login/>}/>
+    <Route path='/forgotPassword' element={<ForgotPassword/>}/>
     <Route path='/userDashboard' element={<UserDashboard/>}>
     </Route>
    </Routes>
