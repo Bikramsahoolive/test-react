@@ -1,8 +1,9 @@
 import './login.css';
-import React,{useState} from 'react';
+import React,{useState,useEffect,useRef} from 'react';
 import { sha256 } from "js-sha256";
 import { ClipLoader } from 'react-spinners';
 import {useNavigate} from 'react-router-dom'
+import { distData } from '../utils/districtData';
 
 function Login(){
     const localAuthToken = localStorage.getItem('AUTH_TOKEN');
@@ -10,9 +11,24 @@ function Login(){
     const [loader, setLoader] = useState(false);
     const [username,setUsername]= useState('');
     const [passwordValue,setpasswordValue] = useState('');
+    const captchaRef = useRef(null);
+    const distRef = useRef(null);
 
     const [validUsername,setValidUsername]= useState(false);
     const [validPassword,setValidPassword] = useState(false);
+    const [captcha,setCaptcha] = useState(null);
+    useEffect( ()=>{
+        async function fetchData(){
+            const response = await fetch('https://99zfntk1-3300.inc1.devtunnels.ms/api/captcha',{
+                credentials:'include',
+            });
+        const captchaSVG = await response.text();
+        setCaptcha(captchaSVG)
+        }
+
+        fetchData();
+        
+    },[]);
 
     function validateUsername(e){
         let usernameVal = e.target.value;
@@ -39,11 +55,18 @@ function Login(){
     function loginUser(e){
         e.preventDefault();
         if(validUsername && validPassword){
-            const encPass = sha256(username,passwordValue);
+            const encPass = sha256(`${username}#${passwordValue}`);
+            const captchaVal = captchaRef.current.value;
+            const distVal   = distRef.current.value;
+            if(distVal == '')return alert('Please Choose District.');
+            if(captchaVal.length !==4)return alert('Enter valid captcha.');
             const data = {
                 email:username,
-                password:encPass
+                password:encPass,
+                captcha:captchaVal,
+                districtCode:distVal
             }
+            
             loginUserApi(data);
         }else{
             alert('Invalid Credentials.');
@@ -61,18 +84,26 @@ function Login(){
 
         fetch('https://99zfntk1-3300.inc1.devtunnels.ms/api/login',{
             method:'POST',
+            credentials:'include',
             headers:{
                 'Content-Type':'application/json',
+                
             },
             body:JSON.stringify(data)
         })
         .then((resp)=>resp.json())
         .then((respData)=>{
             alert(respData.message);
-            window.localStorage.setItem('AUTH_TOKEN',respData.authToken);
             setLoader(false);
-            userNavigate({usertype:'user'});
-        })
+            if(respData.status==='success'){
+                window.localStorage.setItem('AUTH_TOKEN',respData.authToken);
+                userNavigate({usertype:'user'});   
+            }
+        }).catch((err)=>{
+            alert('Error while login.');
+            console.log(err);
+            setLoader(false);
+        });
         
     }
 
@@ -87,10 +118,27 @@ function Login(){
       <h1 className='titel-login'><span className="l">L</span>OGIN</h1>
     </div>
     <form onSubmit={loginUser}>
+        <select className="district-data" ref={distRef} id='district' name='district' style={{ width: '99%', height: '35px' }}>
+                                                <option value=''>--Select District--</option>
+                                                {distData.map((dist, index) => {
+                                                    return <option key={index} value={dist.districtCode}>{dist.odiaDistrictName}</option>
+                                                })}
+                                            </select>
       <label>Username</label>
-      <input type="text" onChange={validateUsername} className="inp" required />
+      <input type="email" onChange={validateUsername} className="inp" required />
       <label>Password</label>
       <input type="password" onChange={validatePassword} className="inp"  required />
+      <div style={{display:'flex', width:'90%'}}>
+      {captcha ? (<div
+          dangerouslySetInnerHTML={{
+            __html: captcha,
+          }}
+        />
+      ) : (
+        <p>Loading Captcha...</p>
+      )}
+      <input type='text' placeholder='Enter Captcha' ref={captchaRef} style={{width:'120px', height:'40px', border:'none',outline:'none',borderBottom:'2px solid black'}}/>
+      </div>
       <button type="submit" className='login-btn'><ClipLoader
                                             color="white"
                                             cssOverride={{ zIndex: 10 }}

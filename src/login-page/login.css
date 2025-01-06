@@ -7,7 +7,10 @@
    width: 100%;
    background-color: black;
 }
-
+.district-data{
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
 :root {
     --primary: #4f7bfc;
   }
@@ -20,6 +23,7 @@
     align-items: center;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 100px;
   }
   .header {
     text-align: center;

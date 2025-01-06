@@ -2,6 +2,7 @@ import './forgotPassword.css';
 import React,{useState, useRef} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {sha256} from 'js-sha256'
+
 function ForgotPassword(){
 const navigate = useNavigate();
 const [emailData,setEmailData] = useState('');
@@ -54,7 +55,7 @@ const[otpSent,setOtpSent] = useState(false);
 
         const otpValue = otpRef.current.value;
         const passwordValue = passwordRef.current.value;
-        const encPass = sha256(emailData,passwordValue)
+        const encPass = sha256(`${emailData}#${passwordValue}`);
         const data = {email:emailData,otp:otpValue,password:encPass};
         changePassword(data);
 

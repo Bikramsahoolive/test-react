@@ -171,6 +171,7 @@
     color: #FFF;
     background-color: #6c63ff;
     font-size: 20px;
+    width: 100%;
   }
   .landing-page .content .info button:hover{
     background-color: gray;
@@ -186,8 +187,10 @@
     width: 600px;
     height: 400px;
   }
-   h1,p{
+   h2,p{
     color:white;
+    margin-top: 50px;
+    margin-bottom: 0;
   }
 
 

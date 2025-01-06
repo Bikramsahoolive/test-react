@@ -1,6 +1,6 @@
 import './App.css';
 import {Link,useParams, useNavigate} from 'react-router-dom';
-
+import odishaLogo from './assets/odisha_logo.svg';
 function App() {
     const navigate = useNavigate();
     const authToken = localStorage.getItem('AUTH_TOKEN');
@@ -11,7 +11,9 @@ function App() {
     }
 
   return (  <div> <div className="navbar">
-    <h1 className="logo">DMS</h1>
+    <img src={odishaLogo} alt='Govt Of Odisha'/>
+    <h3 className="logo">Department of Revenue and Disaster Management Govenment of Odisha</h3>
+
     <div className="navlinks">
         {authToken ? null : <Link to={'/'}>Home</Link>}
         {authToken ? <a onClick={logout}>Logout</a> : <Link to={'/login'}>Login</Link>}

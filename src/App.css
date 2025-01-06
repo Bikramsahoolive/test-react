@@ -24,15 +24,20 @@
   background-color: #575757;
   color: #fff;
 }
+.navbar img{
+  width:80px;
+  height:80px;
+  margin-left:30px;
+}
 .logo{
-  color: chocolate;
+  color: rgb(255, 253, 252);
   margin-left: 50px;
   display: inline;
-  width: 10%;
+  width: 50%;
   text-align: start;
 }
 .navlinks{
-  width: 90%;
+  width: 80%;
   text-align: end;
 }
 .login{

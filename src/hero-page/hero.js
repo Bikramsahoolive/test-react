@@ -1,40 +1,45 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom';
 import './hero.css';
 import { ClipLoader } from 'react-spinners';
 import {sha256 } from 'js-sha256'
+import { distData } from '../utils/districtData';
 
 const textColor = {
     color: "white",
 }
 function Hero() {
+    const navigate = useNavigate();
     const [nameTouched, setNameTouched] = useState(false);
     const [emailTouched, setEmailTouched] = useState(false);
     const [passwordTouched, setPasswordTouched] = useState(false);
     const [loader, setLoader] = useState(false);
     const [age, setNum] = useState(35);
-    const [username, setusername] = useState('');
-    const [userEmail, setUserEmail] = useState('');
-    const [password, setPassword] = useState('');
+
+    const nameRef = useRef(null);
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null); 
+    const distRef = useRef(null);
+    const usertypeRef = useRef(null);
 
     const [usernameErr, setUsernameErr] = useState(true);
     const [userEmailErr, setUserEmailErr] = useState(true);
     const [passwordErr, setPasswordErr] = useState(true);
 
-    function increseNum() {
-        if (age < 60) { setNum(age + 1); }
-        else { alert("Maximum Age Reached!") };
-    }
-    function decreseNum() {
-        if (age > 18) { setNum(age - 1); }
-        else { alert("Minimum Age 18 Required!") };
-    }
+    // function increseNum() {
+    //     if (age < 60) { setNum(age + 1); }
+    //     else { alert("Maximum Age Reached!") };
+    // }
+    // function decreseNum() {
+    //     if (age > 18) { setNum(age - 1); }
+    //     else { alert("Minimum Age 18 Required!") };
+    // }
 
     function usernameHandler(e) {
         let name = e.target.value;
         if (name.length < 3) {
             setUsernameErr(true);
         } else {
-            setusername(name);
             setUsernameErr(false);
         }
 
@@ -47,7 +52,6 @@ function Hero() {
         if (!isValidEmail) {
             setUserEmailErr(true);
         } else {
-            setUserEmail(email);
             setUserEmailErr(false);
         }
     }
@@ -57,7 +61,6 @@ function Hero() {
         if (password.length < 8 || password.length > 16) {
             setPasswordErr(true);
         } else {
-            setPassword(password);
             setPasswordErr(false);
         }
     }
@@ -74,28 +77,35 @@ function touchedFn(type){
         if (usernameErr || userEmailErr || passwordErr) {
             alert('Invalid Form Data');
         } else {
-            const encPass = sha256(userEmail,password);
+            const username = nameRef.current.value;
+            const userEmail = emailRef.current.value;
+            const password = passwordRef.current.value;
+            const usertype = usertypeRef.current.value;
+            const districtCode = distRef.current.value;
+
+            if(districtCode == '')return alert('Please select District.');
+            if(usertype == '')return alert('Please select Role');
+
+            const encPass = sha256(`${userEmail}#${password}`);
 
             setLoader(true);
-            const data = { name: username, age: age, email: userEmail, password: encPass };
+            const data = { name: username, email: userEmail, password: encPass, userType:usertype, distCode:districtCode };
 
             saveDataOnDB(data,(err,resp)=>{
                 if(err){
-                    alert('Error Occered.');
+                    alert(err);
                     setLoader(false);
-
                 }else{
-
+                    alert(resp.message);
                     if (resp.status =="success"){
-                        alert('User Registered Successfully.');
-                        setLoader(false);
-                        username = '';
-                        userEmail = '';
-                        password = '';
+                        nameRef.current.value = '';
+                        emailRef.current.value = '';
+                        passwordRef.current.value = '';
+                        usertypeRef.current.value='';
+                        distRef.current.value='';
                         setNum(35);
-                    }else{
-                        alert('something wents wrong.')
                     }
+                    setLoader(false);
                 }
                     
                    });
@@ -118,7 +128,7 @@ function touchedFn(type){
             cb(null,data)
         })
             .catch((err) => {
-                cb(err);
+                cb(err,null);
                 console.log(err);
             });
     }
@@ -134,21 +144,34 @@ function touchedFn(type){
                 <div className="content">
                     <div className="container">
                         <div className="info">
-                            <h1>Advanced Document Management System</h1>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus odit nihil ullam nesciunt quidem iste, Repellendus odit nihil</p>
+                            <h2>Document Management System.</h2>
+                            <p>A Govenment of Odisha initiative For hassle free citizen services.</p>
                             <div>
                                 <form onSubmit={register}>
-                                    <input className="reg-input" onBlur={()=>touchedFn('name')} id='name' type='text' placeholder='Enter Your Name' name='username' onChange={usernameHandler}></input> <br></br>
+                                    <select className="reg-input" id='district' ref={distRef} name='district' style={{ width: '98%', height: '35px' }}>
+                                        <option value=''>--Select District--</option>
+                                        {distData.map((dist, index) => {
+                                            return <option key={index} value={dist.districtCode}>{dist.odiaDistrictName}</option>
+                                        })}
+                                    </select>
+                                    <select className="reg-input" id='usertype' name='usertype' ref={usertypeRef} style={{ width: '98%', height: '35px' }}>
+                                        <option value=''>--Select Role--</option>
+                                        <option value='admin'>Admin</option>
+                                        <option value='deo'>DATA ENTRY OPERATOR</option>
+                                        <option value='rk'>RECORD KEEPER</option>
+                                    </select>
+
+                                    <input className="reg-input" onBlur={()=>touchedFn('name')} id='name' type='text' placeholder='Enter Your Name' name='username' onChange={usernameHandler} ref={nameRef}></input> <br></br>
                                     {nameTouched && usernameErr ? <span style={{ color: 'red' }}>Invalid Name.</span> : null}
-                                    <input className="reg-input" id='email' onBlur={()=>touchedFn('email')} type='email'autoComplete='off' placeholder='Enter Your Email' name='useremail' onChange={userEmailHandler}></input><br></br>
+                                    <input className="reg-input" id='email' onBlur={()=>touchedFn('email')} type='email'autoComplete='off' placeholder='Enter Your Email' name='useremail' onChange={userEmailHandler} ref={emailRef}></input><br></br>
                                     { emailTouched && userEmailErr ? <span style={{ color: 'red' }}>Invalid Email.</span> : null}
-                                    <input className="reg-input" id='password' onBlur={()=>touchedFn('password')} type='password' placeholder='Enter Your Password' name='password' onChange={passwordHandler}></input><br></br>
+                                    <input className="reg-input" id='password' onBlur={()=>touchedFn('password')} type='password' placeholder='Enter Your Password' name='password' onChange={passwordHandler} ref={passwordRef}></input><br></br>
                                     {passwordTouched && passwordErr ? <span style={{ color: 'red' }}>Invalid Password.</span> : null}
-                                    <div className="count">
+                                    {/* <div className="count">
                                         <button type='button' onClick={decreseNum}>-</button>
                                         <div><h2 style={textColor}>Your Age : {age} Years</h2></div>
                                         <button type='button' onClick={increseNum}>+</button>
-                                    </div>
+                                    </div> */}
                                     <span >
                                         
                                         <button type='submit'>Register Now <ClipLoader
