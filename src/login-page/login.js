@@ -16,13 +16,14 @@ function Login(){
 
     const [validUsername,setValidUsername]= useState(false);
     const [validPassword,setValidPassword] = useState(false);
-    const [captcha,setCaptcha] = useState(null);
+    const [captcha,setCaptcha] = useState({});
     useEffect( ()=>{
         async function fetchData(){
             const response = await fetch('https://99zfntk1-3300.inc1.devtunnels.ms/api/captcha',{
-                credentials:'include',
+                method: 'GET',
+        credentials: 'include',
             });
-        const captchaSVG = await response.text();
+        const captchaSVG = await response.json();
         setCaptcha(captchaSVG)
         }
 
@@ -59,7 +60,7 @@ function Login(){
             const captchaVal = captchaRef.current.value;
             const distVal   = distRef.current.value;
             if(distVal == '')return alert('Please Choose District.');
-            if(captchaVal.length !==4)return alert('Enter valid captcha.');
+            if(captchaVal !==captcha.text )return alert('Enter valid captcha.');
             const data = {
                 email:username,
                 password:encPass,
@@ -75,7 +76,7 @@ function Login(){
     }
     function userNavigate(usertype){
         if(usertype.usertype === 'user'){
-            return navigate('/userDashboard');
+            return navigate('/dashboard');
        }
     }
 
@@ -87,7 +88,6 @@ function Login(){
             credentials:'include',
             headers:{
                 'Content-Type':'application/json',
-                
             },
             body:JSON.stringify(data)
         })
@@ -99,6 +99,7 @@ function Login(){
                 window.localStorage.setItem('AUTH_TOKEN',respData.authToken);
                 userNavigate({usertype:'user'});   
             }
+            
         }).catch((err)=>{
             alert('Error while login.');
             console.log(err);
@@ -131,7 +132,7 @@ function Login(){
       <div style={{display:'flex', width:'90%'}}>
       {captcha ? (<div
           dangerouslySetInnerHTML={{
-            __html: captcha,
+            __html: captcha.data,
           }}
         />
       ) : (
