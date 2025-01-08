@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Hero from './hero-page/hero'
-import Login from './login-page/login';
-import ForgotPassword from './forgot-password/forgotPassword';
+import Hero from './components/hero-page/hero'
+import Login from './components/login-page/login';
+import ForgotPassword from './components/forgot-password/forgotPassword';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import UserDashboard from './user-dashboard/userDashboard';
+import UserDashboard from './components/user-dashboard/userDashboard';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

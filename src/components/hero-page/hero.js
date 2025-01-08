@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './hero.css';
 import { ClipLoader } from 'react-spinners';
 import {sha256 } from 'js-sha256'
-import { distData } from '../utils/districtData';
+import { distData } from '../../utils/districtData';
 
 const textColor = {
     color: "white",

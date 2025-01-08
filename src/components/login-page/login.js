@@ -3,7 +3,9 @@ import React,{useState,useEffect,useRef} from 'react';
 import { sha256 } from "js-sha256";
 import { ClipLoader } from 'react-spinners';
 import {useNavigate} from 'react-router-dom'
-import { distData } from '../utils/districtData';
+import { distData } from '../../utils/districtData';
+import {getCaptcha, loginUserApi} from '../../services/authService';
+import Swal from 'sweetalert2';
 
 function Login(){
     const localAuthToken = localStorage.getItem('AUTH_TOKEN');
@@ -17,19 +19,7 @@ function Login(){
     const [validUsername,setValidUsername]= useState(false);
     const [validPassword,setValidPassword] = useState(false);
     const [captcha,setCaptcha] = useState({});
-    useEffect( ()=>{
-        async function fetchData(){
-            const response = await fetch('https://99zfntk1-3300.inc1.devtunnels.ms/api/captcha',{
-                method: 'GET',
-        credentials: 'include',
-            });
-        const captchaSVG = await response.json();
-        setCaptcha(captchaSVG)
-        }
-
-        fetchData();
-        
-    },[]);
+    useEffect( ()=>{getCaptcha(setCaptcha)},[]);
 
     function validateUsername(e){
         let usernameVal = e.target.value;
@@ -53,24 +43,114 @@ function Login(){
         
     }
 
-    function loginUser(e){
+    async function loginUser(e){
         e.preventDefault();
         if(validUsername && validPassword){
             const encPass = sha256(`${username}#${passwordValue}`);
             const captchaVal = captchaRef.current.value;
             const distVal   = distRef.current.value;
-            if(distVal == '')return alert('Please Choose District.');
-            if(captchaVal !==captcha.text )return alert('Enter valid captcha.');
+            if(distVal == ''){
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position:"top",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon:'warning',
+                    title: "Please Select District"
+                  });
+                  return;
+            }
+            if(captchaVal !==captcha.text ){
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon: "warning",
+                    title: "Enter valid captcha"
+                  });
+                  return
+            }
             const data = {
                 email:username,
                 password:encPass,
                 captcha:captchaVal,
                 districtCode:distVal
             }
-            
-            loginUserApi(data);
+            setLoader(true);
+            const loginResponse =await loginUserApi(data);
+            setLoader(false);
+            if(loginResponse.status==='success'){
+                window.localStorage.setItem('AUTH_TOKEN',loginResponse.authToken);
+
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon: "success",
+                    title: "Signed in successfully"
+                  });
+                
+                userNavigate({usertype:'user'});
+                return; 
+            }
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "error",
+                title: loginResponse.message
+              });
+             getCaptcha(setCaptcha);
         }else{
-            alert('Invalid Credentials.');
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "error",
+                title: "Invalid Credentials"
+              });
+              return;
         }
         
     }
@@ -80,33 +160,7 @@ function Login(){
        }
     }
 
-    function loginUserApi(data){
-        setLoader(true);
-
-        fetch('https://99zfntk1-3300.inc1.devtunnels.ms/api/login',{
-            method:'POST',
-            credentials:'include',
-            headers:{
-                'Content-Type':'application/json',
-            },
-            body:JSON.stringify(data)
-        })
-        .then((resp)=>resp.json())
-        .then((respData)=>{
-            alert(respData.message);
-            setLoader(false);
-            if(respData.status==='success'){
-                window.localStorage.setItem('AUTH_TOKEN',respData.authToken);
-                userNavigate({usertype:'user'});   
-            }
-            
-        }).catch((err)=>{
-            alert('Error while login.');
-            console.log(err);
-            setLoader(false);
-        });
-        
-    }
+    
 
     function navigateToForgotPassword(){
         return navigate('/forgotPassword');
@@ -149,7 +203,7 @@ function Login(){
                                         />Enter</button>
     </form>
     <div className="signup">
-    <a onClick={navigateToForgotPassword}>Forgot Password</a>
+    <a onClick={navigateToForgotPassword} style={{cursor:'pointer'}}>Forgot Password</a>
     </div>
   </div>
 </div>
