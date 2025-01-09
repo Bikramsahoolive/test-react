@@ -197,6 +197,43 @@ const[otpSent,setOtpSent] = useState(false);
     }
     }
 
+    async function resendOtp(){
+        const respData =await resetUserPassword({email:emailData});
+        if(respData.status =='success'){
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "success",
+                title: respData.message
+              });
+        }else{
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "error",
+                title: respData.message
+              });
+        }
+    }
+
     return(
 
     <div className="login-component">
@@ -204,12 +241,15 @@ const[otpSent,setOtpSent] = useState(false);
      <div className="header">
      <i className="fa fa-lock fa-4x"></i>
        <h1 className='titel-login'><span className="l">FORGOT</span>PASSWORD</h1>
-       <p style={{color:'gray'}}>You can reset your password here.</p>
+       {/* <p style={{color:'gray'}}>You can reset your password here.</p> */}
      </div>
 
      {otpSent? <form onSubmit={validatePasswod}>
+      <strong style={{color:'gray',textAlign:'center', display:'block'}}>Please Enter OTP Sent To</strong><br/>
+      <span style={{color:'green',textAlign:'center', display:'block'}}>{emailData}</span>
         {/* <label>OTP</label> */}
         <input type="text" placeholder="Enter OTP" className="inp" autoComplete="one-time-code" ref={otpRef} inputMode="numeric" maxLength="6" style={{marginBottom:"30px"}}/>
+        <a onClick={resendOtp} style={{color:'blue',textAlign:'right', display:'block'}}>Resend OTP</a>
         {/* <label>New Password</label> */}
         <input type="password" placeholder='Enter New Password' ref={passwordRef}  className="inp"/>
         {/* <label>Confirm Password</label> */}

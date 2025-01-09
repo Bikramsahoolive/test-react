@@ -148,23 +148,27 @@ function touchedFn(type){
                             <p>A Govenment of Odisha initiative For hassle free citizen services.</p>
                             <div>
                                 <form onSubmit={register}>
-                                    <select className="reg-input" id='district' ref={distRef} name='district' style={{ width: '98%', height: '35px' }}>
+                                    {/* <select className="reg-input" id='district' ref={distRef} name='district' style={{ width: '98%', height: '35px' }}>
                                         <option value=''>--Select District--</option>
                                         {distData.map((dist, index) => {
                                             return <option key={index} value={dist.districtCode}>{dist.odiaDistrictName}</option>
                                         })}
-                                    </select>
+                                    </select> */}
                                     <select className="reg-input" id='usertype' name='usertype' ref={usertypeRef} style={{ width: '98%', height: '35px' }}>
                                         <option value=''>--Select Role--</option>
                                         <option value='admin'>Admin</option>
-                                        <option value='deo'>DATA ENTRY OPERATOR</option>
-                                        <option value='rk'>RECORD KEEPER</option>
+                                        <option disabled={true} value='administrator'>Administrator</option>
+                                        <option disabled={true} value='tahasil'>Tahasil Officer</option>
+                                        <option disabled={true} value='deo'>DATA ENTRY OPERATOR</option>
+                                        <option disabled={true} value='rk'>RECORD KEEPER</option>
                                     </select>
 
                                     <input className="reg-input" onBlur={()=>touchedFn('name')} id='name' type='text' placeholder='Enter Your Name' name='username' onChange={usernameHandler} ref={nameRef}></input> <br></br>
                                     {nameTouched && usernameErr ? <span style={{ color: 'red' }}>Invalid Name.</span> : null}
                                     <input className="reg-input" id='email' onBlur={()=>touchedFn('email')} type='email'autoComplete='off' placeholder='Enter Your Email' name='useremail' onChange={userEmailHandler} ref={emailRef}></input><br></br>
                                     { emailTouched && userEmailErr ? <span style={{ color: 'red' }}>Invalid Email.</span> : null}
+                                    <input className="reg-input" id='phone' onBlur={()=>touchedFn('email')} type='email'autoComplete='off' placeholder='Enter Your Phone' name='phone' onChange={userEmailHandler} ref={emailRef}></input><br></br>
+                                    { emailTouched && userEmailErr ? <span style={{ color: 'red' }}>Invalid Phone.</span> : null}
                                     <input className="reg-input" id='password' onBlur={()=>touchedFn('password')} type='password' placeholder='Enter Your Password' name='password' onChange={passwordHandler} ref={passwordRef}></input><br></br>
                                     {passwordTouched && passwordErr ? <span style={{ color: 'red' }}>Invalid Password.</span> : null}
                                     {/* <div className="count">

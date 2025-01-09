@@ -19,7 +19,9 @@ function Login(){
     const [validUsername,setValidUsername]= useState(false);
     const [validPassword,setValidPassword] = useState(false);
     const [captcha,setCaptcha] = useState({});
-    useEffect( ()=>{getCaptcha(setCaptcha)},[]);
+    useEffect( ()=>{
+      getCaptcha(setCaptcha);
+      },[]);
 
     function validateUsername(e){
         let usernameVal = e.target.value;
@@ -179,20 +181,20 @@ function Login(){
                                                     return <option key={index} value={dist.districtCode}>{dist.odiaDistrictName}</option>
                                                 })}
                                             </select>
-      <label>Username</label>
+      <label>Email</label>
       <input type="email" onChange={validateUsername} className="inp" required />
       <label>Password</label>
       <input type="password" onChange={validatePassword} className="inp"  required />
       <div style={{display:'flex', width:'90%'}}>
-      {captcha ? (<div
+      {captcha ? <div
           dangerouslySetInnerHTML={{
             __html: captcha.data,
           }}
+          
         />
-      ) : (
-        <p>Loading Captcha...</p>
-      )}
-      <input type='text' placeholder='Enter Captcha' ref={captchaRef} style={{width:'120px', height:'40px', border:'none',outline:'none',borderBottom:'2px solid black'}}/>
+       : <p>Loading Captcha...</p>}
+       <div style={{display:'flex',alignItems:'center', padding:'5px',cursor:'pointer',}} onClick={()=>getCaptcha(setCaptcha)}><i class="fa-solid fa-arrows-rotate"></i></div>
+      <input type='text' placeholder='Enter Captcha' ref={captchaRef} style={{width:'90px', paddingLeft:'10px', height:'40px', border:'none',outline:'none',borderBottom:'2px solid black'}}/>
       </div>
       <button type="submit" className='login-btn'><ClipLoader
                                             color="white"
