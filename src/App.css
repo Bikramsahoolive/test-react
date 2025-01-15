@@ -13,10 +13,16 @@
 
 /* Style each link in the navbar */
 .navbar a {
-  color: white;
   padding: 14px 20px;
   text-decoration: none;
   display: inline-block;
+}
+
+.active{
+  color:orange;
+}
+.inactive{
+  color:white;
 }
 
 /* Add hover effect for the links */

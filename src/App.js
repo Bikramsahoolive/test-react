@@ -1,5 +1,5 @@
 import './App.css';
-import {Link,useParams, useNavigate} from 'react-router-dom';
+import {Link,useParams, useNavigate,NavLink,Outlet} from 'react-router-dom';
 import odishaLogo from './assets/odisha_logo.svg';
 function App() {
     const navigate = useNavigate();
@@ -10,25 +10,28 @@ function App() {
         return navigate('/');
     }
 
-  return (  <div> <div className="navbar">
+  return (  <> <div className="navbar">
     <img src={odishaLogo} alt='Govt Of Odisha'/>
     <h3 className="logo">Department of Revenue and Disaster Management Govenment of Odisha</h3>
 
     <div className="navlinks">
-        {authToken ? null : <Link to={'/'}>Home</Link>}
-        {authToken ? <a onClick={logout}>Logout</a> : <Link to={'/login'}>Login</Link>}
+        {authToken ? null : <NavLink to="/" className =  {({isActive})=> isActive ? 'active' : 'inactive'}>Home</NavLink>}
+        {authToken ? <a onClick={logout}>Logout</a> : <NavLink to='/login' className={({isActive})=> isActive ? 'active' : 'inactive'} >Login</NavLink>}
         
     
     </div>
 </div>
-{/* <div className='dropdown'>
+{/* 
+<div className='dropdown'>
 <a href="#">Home</a>
     <a href="#about">About</a>
     <a href="#services">Services</a>
     <a href="#contact">Contact</a>
     <button className="login">Login</button>
-</div> */}
-</div>);
+</div>
+ */}
+ <Outlet/>
+</>);
 }
 
 export default App;

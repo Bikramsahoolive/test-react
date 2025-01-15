@@ -92,3 +92,20 @@ export async function changePassword(data){
         console.log('Error',error);
     }
 }
+
+export async function registerUserApi(data){
+    try {
+        const response = await fetch(`${process.env.REACT_APP_URL}/api/register`,{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(data)
+        });
+        const respData = await response.json();
+        return respData;
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+}

@@ -146,6 +146,7 @@ function touchedFn(type){
                         <div className="info">
                             <h2>Document Management System.</h2>
                             <p>A Govenment of Odisha initiative For hassle free citizen services.</p>
+                            <h3 style={{color:'white'}}>User Registration{' (Admin)'}</h3>
                             <div>
                                 <form onSubmit={register}>
                                     {/* <select className="reg-input" id='district' ref={distRef} name='district' style={{ width: '98%', height: '35px' }}>
